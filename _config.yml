@@ -1,10 +1,10 @@
 # Site settings
-title: 'rhythmcity.github.io' # Your Title
-tagline: 'yyyyyyyy。' # A brief tagline for your site
+title: 'Mr.Tomato的技术博客' # Your Title
+tagline: '既然选择了一条路，何必打听要走多远' # A brief tagline for your site
 sidebar_image: /images/cover.jpg
 
 # Build settings
 markdown: redcarpet
 highlighter: pygments
-baseurl:/rhythmcity.github.io/
+baseurl://
 # the subpath of your site, e.g. /blog/
