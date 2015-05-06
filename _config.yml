@@ -1,9 +1,9 @@
 # Site settings
 title: 'rhythmcity.github.io' # Your Title
-tagline: '¼ÈÈ»Ñ¡ÔñÁËÒ»ÌõÂ·£¬ÓÖºÎ±Ø´òÌıÒª×ß¶à¾Ã¡£' # A brief tagline for your site
+tagline: 'æ—¢ç„¶é€‰æ‹©äº†ä¸€æ¡è·¯ï¼Œåˆä½•å¿…æ‰“å¬è¦èµ°å¤šä¹…ã€‚' # A brief tagline for your site
 sidebar_image: /images/cover.jpg
 
 # Build settings
 markdown: redcarpet
 highlighter: pygments
-baseurl:  # the subpath of your site, e.g. /blog/
+baseurl:/  # the subpath of your site, e.g. /blog/
