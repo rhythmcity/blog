@@ -6,4 +6,5 @@ sidebar_image: /images/cover.jpg
 # Build settings
 markdown: redcarpet
 highlighter: pygments
-baseurl:/rhythmcity  # the subpath of your site, e.g. /blog/
+baseurl:/rhythmcity
+# the subpath of your site, e.g. /blog/
