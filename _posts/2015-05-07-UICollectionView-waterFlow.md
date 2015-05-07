@@ -154,7 +154,7 @@ return allAttributes;
 
 ```
 
-到目前为止我们的布局和每一个item的样式都搞定了，运行起来看一下 你会发现什么都没有，那是因为我们还差一个方法
+到目前为止我们的布局和每一个item的样式都搞定了，运行起来看一下,你会发现什么都没有，那是因为我们还差一个方法
 
 ```
 - (CGSize)collectionViewContentSize; // Subclasses must override this method and use it to return the width and height of the collection view’s content. These values represent the width and height of all the content, not just the content that is currently visible. The collection view uses this information to configure its own content size to facilitate scrolling.
