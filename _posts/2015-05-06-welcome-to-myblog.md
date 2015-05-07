@@ -2,7 +2,7 @@
 layout: post
 title: "博客终于开通啦"
 date: 2015-05-06 23:26:00
-categories: jekyll
+categories: 心情
 featured_image: /images/cover.jpg
 ---
 
