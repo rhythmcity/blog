@@ -14,14 +14,14 @@ featured_image: /images/cover.jpg
 UIcollectionView 是iOS6新加入的UIkit组件，
 用法和UITableview差不多同样是要实现两个代理协议
 
-```objective-c
+```
     @property (nonatomic, assign) id <UICollectionViewDelegate> delegate;
     @property (nonatomic, assign) id <UICollectionViewDataSource> dataSource;
 ```
 
 首先创建一个CollectView
 
-```objective-c
+``` 
 self.conllectionFlowLayout = [[UICollectionViewFlowLayout alloc] init];
 self.conllectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:self.conllectionFlowLayout];
 self.conllectionView.backgroundColor = [UIColor whiteColor];
@@ -33,7 +33,7 @@ self.conllectionView.dataSource = self;
 ```
 然后实现几个代理，这根tableview 的写法基本一样
 
-```objective-c
+``` 
 
 #pragma mark UICollectionViewDataSource
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
@@ -68,7 +68,7 @@ self.conllectionView.dataSource = self;
 下面我们要怎么把他做成我们以前想要的样子呢 那就是UICollectionView的灵魂，` "UICollectionViewLayout" `
 这时候我们创建一个MasonyLayout 继承自UICollectionViewLayout ，然后定义一个协议用来接受每一个item的高度，并且声明两个成员变量一个是 "列数" 另一个是“每列的间隔”
 
-```objective-c
+``` 
 
 #import <UIKit/UIKit.h>
 @class MasonyLayout;
@@ -89,7 +89,7 @@ heightForItemAtIndexPath:(NSIndexPath*) indexPath;
 ```
 然后在.m文件中实现 `-(void)prepareLayout` 方法 每次重新给出layout时都会调用prepareLayout，这样在以后如果有collectionView大小变化的需求时也可以自动适应变化。
 
-```objective-c
+``` 
 -(void)prepareLayout{
 self.lastYValueForColumn = [NSMutableDictionary dictionary];//存储每列最后一个的item信息 用来计算下一列起始位置
 CGFloat currentColumn = 0;
@@ -138,7 +138,7 @@ self.layoutInfo[indexPath] = itemAttributes;
 接下来实现 -(NSArray *)layoutAttributesForElementsInRect:(CGRect)rect  这个方法会返回rect中的所有的元素的布局属性
 返回的是包含UICollectionViewLayoutAttributes的NSArray,我们现在所有的item的属性都放在 self.layoutInfo 这个字典里面所以我们从这里面取出我们的layoutAttributes
 
-```objective-c
+``` 
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
 
@@ -180,7 +180,7 @@ return CGSizeMake(self.collectionView.frame.size.width, maxHeight);
 ```
 这样我们的MasonyLayout 就写好了，这样我们在初始化UICollectionView时 就可以用我们自定义的布局了 并且实现我们自定义的协议：
 
-```objective-c
+``` 
 
 self.masonyLayout = [[MasonyLayout alloc] init];
 self.masonyLayout.numberofColumns = 3;
