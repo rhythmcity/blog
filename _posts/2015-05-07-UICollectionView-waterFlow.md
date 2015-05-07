@@ -1,4 +1,3 @@
-# 2015-05-07-UICollectionView-waterFlow
 
 ---
 layout: post
