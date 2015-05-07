@@ -1,10 +1,16 @@
 # Site settings
-title: 'Mr.Tomato的技术博客' # Your Title
-tagline: '既然选择了一条路，何必打听要走多远' # A brief tagline for your site
-sidebar_image: /images/cover.jpg
+title: Clean Blog
+header-img: img/home-bg.jpg
+email: rhythmcity@163.com
+description: “既然选择了一条路，又何必打听要走多久。”
+baseurl: ""
+url: "http://yourdomain.com"
+github_username:  rhythmcity
+
 
 # Build settings
-markdown: redcarpet
+markdown: kramdown
 highlighter: pygments
-baseurl: 
-# the subpath of your site, e.g. /blog/
+permalink: pretty
+paginate: 5
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
