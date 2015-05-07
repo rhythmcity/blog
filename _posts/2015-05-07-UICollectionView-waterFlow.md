@@ -14,7 +14,7 @@ featured_image: /images/cover.jpg
 UIcollectionView 是iOS6新加入的UIkit组件，
 用法和UITableview差不多同样是要实现两个代理协议
 
-```objective
+```objective-c
     @property (nonatomic, assign) id <UICollectionViewDelegate> delegate;
     @property (nonatomic, assign) id <UICollectionViewDataSource> dataSource;
 ```
