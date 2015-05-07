@@ -157,47 +157,47 @@ UIcollectionView 是iOS6新加入的UIkit组件，
 
 看苹果官方的文档说明，子类必须重写这个方法返回content view的宽和高 这个高度是所有的宽和高不仅仅是当前屏幕的，collectionView需要这个信息来滚动 其实就是给collectionView 一个contentSize  因为父类也是UIScrollview
 
-```
-//计算collectionview 的contentSize
--(CGSize) collectionViewContentSize {
 
-NSUInteger currentColumn = 0;
-CGFloat maxHeight = 0;
-do {
-CGFloat height = [self.lastYValueForColumn[@(currentColumn)] doubleValue];
-if(height > maxHeight)
-maxHeight = height;
-currentColumn ++;
-} while (currentColumn < self.numberofColumns);
+    //计算collectionview 的contentSize
+    -(CGSize) collectionViewContentSize {
+    
+    NSUInteger currentColumn = 0;
+    CGFloat maxHeight = 0;
+    do {
+    CGFloat height = [self.lastYValueForColumn[@(currentColumn)] doubleValue];
+    if(height > maxHeight)
+    maxHeight = height;
+    currentColumn ++;
+    } while (currentColumn < self.numberofColumns);
+    
+    return CGSizeMake(self.collectionView.frame.size.width, maxHeight);
+    }
 
-return CGSizeMake(self.collectionView.frame.size.width, maxHeight);
-}
 
-```
 这样我们的MasonyLayout 就写好了，这样我们在初始化UICollectionView时 就可以用我们自定义的布局了 并且实现我们自定义的协议：
 
-``` 
+ 
 
-self.masonyLayout = [[MasonyLayout alloc] init];
-self.masonyLayout.numberofColumns = 3;
-self.masonyLayout.interItemSpacing = 12.5;
-self.masonyLayout.delegate = self;
-self.conllectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:self.masonyLayout];
+    self.masonyLayout = [[MasonyLayout alloc] init];
+    self.masonyLayout.numberofColumns = 3;
+    self.masonyLayout.interItemSpacing = 12.5;
+    self.masonyLayout.delegate = self;
+    self.conllectionView = [[UICollectionView alloc] initWithFrame:self.view.bounds collectionViewLayout:self.masonyLayout];
+    
+    
+    
+    #pragma mark MasonryViewLayoutDelegate
+    - (CGFloat) collectionView:(UICollectionView*) collectionView
+    layout:(MasonyLayout*) layout
+    heightForItemAtIndexPath:(NSIndexPath*) indexPath{
+    
+    
+    CGFloat randomHeight = 100+(arc4random()%140);
+    
+    return randomHeight;
+    }
 
 
-
-#pragma mark MasonryViewLayoutDelegate
-- (CGFloat) collectionView:(UICollectionView*) collectionView
-layout:(MasonyLayout*) layout
-heightForItemAtIndexPath:(NSIndexPath*) indexPath{
-
-
-CGFloat randomHeight = 100+(arc4random()%140);
-
-return randomHeight;
-}
-
-```
 
 这样就实现了我们最开始想好的效果，只是因为瀑布流的样式，在应用开发里面很常见，常用于图片浏览，其实UICollectionView可以实现很多酷炫的布局方式，还需要多研究研究
 
