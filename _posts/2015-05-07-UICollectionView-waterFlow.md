@@ -1,5 +1,3 @@
-# 2015-05-07-UICollectionView-waterFlow
-
 ---
 layout: post
 title: "用UICollectionView实现瀑布流效果"
