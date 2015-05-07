@@ -8,7 +8,7 @@ featured_image: /images/cover.jpg
 
 最终效果是这样
 
-![最终效果](https://github.com/rhythmcity/rhythmcity.github.io/raw/master/images/waterFlow/Effect.png)
+![最终效果](https://github.com/rhythmcity/rhythmcity.github.io/raw/master/img/waterFlow/Effect.png)
 
 
 UIcollectionView 是iOS6新加入的UIkit组件，
@@ -63,7 +63,7 @@ self.conllectionView.dataSource = self;
 
 ```
 实现了这些现在的样子是这样的
-![](https://github.com/rhythmcity/rhythmcity.github.io/raw/master/images/waterFlow/nomal.png)
+![](https://github.com/rhythmcity/rhythmcity.github.io/raw/master/img/waterFlow/nomal.png)
 
 下面我们要怎么把他做成我们以前想要的样子呢 那就是UICollectionView的灵魂，` "UICollectionViewLayout" `
 这时候我们创建一个MasonyLayout 继承自UICollectionViewLayout ，然后定义一个协议用来接受每一个item的高度，并且声明两个成员变量一个是 "列数" 另一个是“每列的间隔”
