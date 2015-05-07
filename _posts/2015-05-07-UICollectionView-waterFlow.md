@@ -39,10 +39,10 @@ UIcollectionView 是iOS6新加入的UIkit组件，
        }
        
     - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
-    static NSString *cellID = @"cellID";
-    CollectionViewCell *cell = [self.conllectionView dequeueReusableCellWithReuseIdentifier:cellID forIndexPath:indexPath];
-    cell.backgroundColor = [UIColor grayColor];
-    return cell;
+        static NSString *cellID = @"cellID";
+        CollectionViewCell *cell = [self.conllectionView dequeueReusableCellWithReuseIdentifier:cellID forIndexPath:indexPath];
+        cell.backgroundColor = [UIColor grayColor];
+        return cell;
     }
 
     #pragma mark UICollectionViewDelegate
@@ -87,46 +87,46 @@ UIcollectionView 是iOS6新加入的UIkit组件，
 
 
     -(void)prepareLayout{
-    self.lastYValueForColumn = [NSMutableDictionary dictionary];//存储每列最后一个的item信息 用来计算下一列起始位置
-    CGFloat currentColumn = 0;
-    CGFloat fullwidth = self.collectionView.frame.size.width;
-    CGFloat availableSpaceExcludingPadding = fullwidth - self.interItemSpacing*(self.numberofColumns+1);
-    CGFloat itemWidth = availableSpaceExcludingPadding/self.numberofColumns;
-    
-    self.layoutInfo = [NSMutableDictionary dictionary]; //用来存储每一个item 的布局信息
-    NSIndexPath *indexPath;
-    NSInteger numSections = [self.collectionView numberOfSections];
-    
-    for(NSInteger section = 0; section < numSections; section++)  {
-    
-    NSInteger numItems = [self.collectionView numberOfItemsInSection:section];
-    for(NSInteger item = 0; item < numItems; item++){
-    indexPath = [NSIndexPath indexPathForItem:item inSection:section];
-    
-    UICollectionViewLayoutAttributes *itemAttributes =
-    [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
-    
-    CGFloat x = self.interItemSpacing + (self.interItemSpacing + itemWidth) * currentColumn;
-    CGFloat y = [self.lastYValueForColumn[@(currentColumn)] doubleValue];
-    /**
-    通过代理获取每一个item 的高度
-    */
-    CGFloat height = [((id<MasonryViewLayoutDelegate>)self.collectionView.delegate)
-    collectionView:self.collectionView
-    layout:self
-    heightForItemAtIndexPath:indexPath];
-    
-    itemAttributes.frame = CGRectMake(x, y, itemWidth, height);
-    y+= height;
-    y += self.interItemSpacing;
-    
-    self.lastYValueForColumn[@(currentColumn)] = @(y);
-    
-    currentColumn ++;
-    if(currentColumn == self.numberofColumns) currentColumn = 0;
-    self.layoutInfo[indexPath] = itemAttributes;
-    }
-    }
+        self.lastYValueForColumn = [NSMutableDictionary dictionary];//存储每列最后一个的item信息 用来计算下一列起始位置
+        CGFloat currentColumn = 0;
+        CGFloat fullwidth = self.collectionView.frame.size.width;
+        CGFloat availableSpaceExcludingPadding = fullwidth - self.interItemSpacing*(self.numberofColumns+1);
+        CGFloat itemWidth = availableSpaceExcludingPadding/self.numberofColumns;
+        
+        self.layoutInfo = [NSMutableDictionary dictionary]; //用来存储每一个item 的布局信息
+        NSIndexPath *indexPath;
+        NSInteger numSections = [self.collectionView numberOfSections];
+        
+        for(NSInteger section = 0; section < numSections; section++)  {
+        
+        NSInteger numItems = [self.collectionView numberOfItemsInSection:section];
+        for(NSInteger item = 0; item < numItems; item++){
+        indexPath = [NSIndexPath indexPathForItem:item inSection:section];
+        
+        UICollectionViewLayoutAttributes *itemAttributes =
+        [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+        
+        CGFloat x = self.interItemSpacing + (self.interItemSpacing + itemWidth) * currentColumn;
+        CGFloat y = [self.lastYValueForColumn[@(currentColumn)] doubleValue];
+        /**
+        通过代理获取每一个item 的高度
+        */
+        CGFloat height = [((id<MasonryViewLayoutDelegate>)self.collectionView.delegate)
+        collectionView:self.collectionView
+        layout:self
+        heightForItemAtIndexPath:indexPath];
+        
+        itemAttributes.frame = CGRectMake(x, y, itemWidth, height);
+        y+= height;
+        y += self.interItemSpacing;
+        
+        self.lastYValueForColumn[@(currentColumn)] = @(y);
+        
+        currentColumn ++;
+        if(currentColumn == self.numberofColumns) currentColumn = 0;
+        self.layoutInfo[indexPath] = itemAttributes;
+        }
+        }
     }
 
 
@@ -161,16 +161,16 @@ UIcollectionView 是iOS6新加入的UIkit组件，
     //计算collectionview 的contentSize
     -(CGSize) collectionViewContentSize {
     
-    NSUInteger currentColumn = 0;
-    CGFloat maxHeight = 0;
-    do {
-    CGFloat height = [self.lastYValueForColumn[@(currentColumn)] doubleValue];
-    if(height > maxHeight)
-    maxHeight = height;
-    currentColumn ++;
-    } while (currentColumn < self.numberofColumns);
-    
-    return CGSizeMake(self.collectionView.frame.size.width, maxHeight);
+        NSUInteger currentColumn = 0;
+        CGFloat maxHeight = 0;
+        do {
+        CGFloat height = [self.lastYValueForColumn[@(currentColumn)] doubleValue];
+        if(height > maxHeight)
+        maxHeight = height;
+        currentColumn ++;
+        } while (currentColumn < self.numberofColumns);
+        
+        return CGSizeMake(self.collectionView.frame.size.width, maxHeight);
     }
 
 
@@ -189,12 +189,12 @@ UIcollectionView 是iOS6新加入的UIkit组件，
     #pragma mark MasonryViewLayoutDelegate
     - (CGFloat) collectionView:(UICollectionView*) collectionView
     layout:(MasonyLayout*) layout
-    heightForItemAtIndexPath:(NSIndexPath*) indexPath{
-    
-    
-    CGFloat randomHeight = 100+(arc4random()%140);
-    
-    return randomHeight;
+        heightForItemAtIndexPath:(NSIndexPath*) indexPath{
+        
+        
+        CGFloat randomHeight = 100+(arc4random()%140);
+        
+        return randomHeight;
     }
 
 
