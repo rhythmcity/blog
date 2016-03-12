@@ -159,7 +159,8 @@ featured_image: /images/cover.jpg
 	}
 
 ###事件源
-下午展示l RunLoop 的模型 
+下面展示l RunLoop 的模型 
+
 ![runloop](https://github.com/rhythmcity/rhythmcity.github.io/blob/master/img/runloop/runloopapple.jpg)
 
 这个图看起来有点难理解，大致可以看出来是一个线程内的一个循环，接收事件并且处理事件，并且可以看出RunLoop只处理两种源，输入源可时间源，而输入源又分为，**NSPort**，自定义源，**performSelector:OnThread:delay**
