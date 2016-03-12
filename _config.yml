@@ -1,16 +1,39 @@
 # Site settings
-title: Mr.Tomato的技术博客
-header-img: img/home-bg.jpg
-email: rhythmcity@163.com
-description: "上帝是个程序员。"
-baseurl: ""
-url: "http://weibo.com/2674583891/profile?rightmod=1&wvr=6&mod=personinfo"
-github_username:  rhythmcity
+title: Mr.Tomato的技术播客
+description: '上帝是个程序员'
+url: 'http://liyan.party'
+baseurl: '/jekyll-uno/'
+# google_analytics: 'UA-XXXXXX-X'
+# disqus_shortname: 'your-disqus-name'
 
+author:
+  name: '李言'
+  email: rhythmcity@163.com
+  twitter_username:
+  facebook_username:
+  github_username:  rhythmcity
+  linkedin_username:
+
+defaults:
+  -
+    scope:
+      path: ''
+      type: 'posts'
+    values:
+        layout: 'post'
 
 # Build settings
+destination: _site
+paginate: 10
+permalink: /:year/:title/
 markdown: kramdown
-highlighter: pygments
-permalink: pretty
-paginate: 5
-exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+highlighter: rouge
+
+kramdown:
+  # use Github Flavored Markdown
+  input: GFM
+  # do not replace newlines by <br>s
+  hard_wrap: false
+
+gems: ['jekyll-paginate']
+exclude: ['README.md', 'Gemfile', 'Gemfile.lock', 'screenshot.png']
