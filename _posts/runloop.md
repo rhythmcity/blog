@@ -237,3 +237,5 @@ App启动后，苹果在主线程 RunLoop 里注册了两个 Observer，其回�
 
 
 	
+参考文章 http://blog.ibireme.com/2015/05/18/runloop/
+   	http://blog.cnbluebox.com/blog/2014/07/01/cocoashen-ru-xue-xi-nsoperationqueuehe-nsoperationyuan-li-he-shi-yong/
