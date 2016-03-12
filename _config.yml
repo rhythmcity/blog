@@ -1,7 +1,16 @@
-name: Mr.Tomato的技术博客
-description: 上帝是个程序员
-baseurl: 'http://liyan.party'
+# Site settings
+title: Mr.Tomato的技术博客
+header-img: img/home-bg.jpg
+email: rhythmcity@163.com
+description: "上帝是个程序员。"
+baseurl: ""
+url: "http://weibo.com/2674583891/profile?rightmod=1&wvr=6&mod=personinfo"
+github_username:  rhythmcity
 
-url: "http://liyan.party"
 
-paginate: 10
+# Build settings
+markdown: kramdown
+highlighter: pygments
+permalink: pretty
+paginate: 5
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
