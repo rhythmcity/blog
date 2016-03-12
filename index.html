@@ -1,24 +1,68 @@
 ---
+title: Alpha2
 layout: default
 ---
+<section class="box special">
+	<header class="major">
+		<h2>Introducing the ultimate mobile app10
+		<br />
+		for doing stuff with your phone</h2>
+		<p>Blandit varius ut praesent nascetur eu penatibus nisi risus faucibus nunc ornare<br />
+		adipiscing nunc adipiscing. Condimentum turpis massa.</p>
+	</header>
+	<span class="image featured"><img src="{{ site.baseurl }}/assets/images/pic01.jpg" alt="" /></span>
+</section>
 
-<div class="main-post-list">
+<section class="box special features">
+	<div class="features-row">
+		<section>
+			<span class="icon major fa-bolt accent2"></span>
+			<h3>Magna etiam</h3>
+			<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+		</section>
+		<section>
+			<span class="icon major fa-area-chart accent3"></span>
+			<h3>Ipsum dolor</h3>
+			<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+		</section>
+	</div>
+	<div class="features-row">
+		<section>
+			<span class="icon major fa-cloud accent4"></span>
+			<h3>Sed feugiat</h3>
+			<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+		</section>
+		<section>
+			<span class="icon major fa-lock accent5"></span>
+			<h3>Enim phasellus</h3>
+			<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+		</section>
+	</div>
+</section>
 
-  <ol class="post-list">
-    {% for post in paginator.posts %}
-      <li>
-        <h2 class="post-list__post-title post-title"><a href="{{ site.baseurl }}{{ post.url | remove_first: '/' }}" title="{{ post.title }}">{{ post.title }}</a></h2>
-        <p class="excerpt">{{ post.excerpt | remove: '<p>' | remove: '</p>' }}&hellip;</p>
-        <div class="post-list__meta"><time datetime="{{ post.date | date: "%-d %b %Y" }}" class="post-list__meta--date date">{{ post.date | date: "%-d %b %Y" }}</time> &#8226; <span class="post-meta__tags">on {% for tag in post.tags %}<a href="{{ site.baseurl }}tags/#{{ tag }}">{{ tag }}</a> {% endfor %}</span></div>
-        <hr class="post-list__divider">
-      </li>
-    {% endfor %}
-  </ol>
+<div class="row">
+	<div class="6u">
 
-  <hr class="post-list__divider ">
+		<section class="box special">
+			<span class="image featured"><img src="{{ site.baseurl }}/assets/images/pic02.jpg" alt="" /></span>
+			<h3>Sed lorem adipiscing</h3>
+			<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+			<ul class="actions">
+				<li><a href="#" class="button alt">Learn More</a></li>
+			</ul>
+		</section>
 
-  {% if paginator.previous_page or paginator.next_page %}
-      {% include pagination.html %}
-  {% endif %}
+	</div>
+	<div class="6u">
 
+		<section class="box special">
+			<span class="image featured"><img src="{{ site.baseurl }}/assets/images/pic03.jpg" alt="" /></span>
+			<h3>Accumsan integer</h3>
+			<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+			<ul class="actions">
+				<li><a href="#" class="button alt">Learn More</a></li>
+			</ul>
+		</section>
+
+	</div>
 </div>
