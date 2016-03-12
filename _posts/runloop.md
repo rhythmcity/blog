@@ -1,0 +1,238 @@
+---
+layout: post
+title: "Runloop"
+date: 2016-03-12 10:59:00
+categories: iOS
+featured_image: /images/cover.jpg
+---
+
+在iOS开发中，我们似乎不用关心代码是如何执行的。我们的代码并没有像命令行的那种线性执行的那样，我的代码执行完了，我的程序就退出了，而且他保持着接受我的触摸滑动，当有消息来了能够自动处理的状态,除非我们手动给他干掉！runloop 简单来说其实就干了这么一件事情。
+
+用简单的伪代码来形容：
+
+	while(ture) {
+	    id wake = haveEventToDo();
+	    id event = getEvent(wake);
+	    HandleEvent(event);
+	}
+![loop](https://github.com/rhythmcity/rhythmcity.github.io/blob/master/img/runloop/loop.jpg)
+
+又好像北京的二号线，车头写着一个loop的那种，它就是在不断的跑圈，当我到站了，我就停车开门，关门，当我没有到站，就安安静静的跑下去，如果有人卧轨，我就要及时刹车等等,这里说的停车不是runloop停掉了，只是说是处理事件的一种方式
+
+	while(true) {
+		有事件了 = 真就想这么跑下去无忧无虑();
+		if(到站) {
+		   停车();
+		   开门();
+		   关门();
+		   发车();
+		} else if (卧轨) {
+		   紧急刹车();
+		   报告突发事故();
+		   救人();
+		   ...
+		} else if (回库) {
+		   我被干掉了...
+		}
+	}
+
+##为什么要有runloop？
+我总结了几点
+
+	·使程序一直运行并接受用户输入的事件
+	·决定程序在何时应该处理那些Event
+	·节省CPU，实现异步
+
+为什么说节省CPU时间，实现异步。我记得当时我们技术总监分享了一个EventLoop实现异步，跟runloop很类似，同样是有一个死循环，我有三个任务A、B、C三个下载任务要处理，但是我又不知道哪个有数据返回去处理，我就不断的循环循环再循环，当A有数据返回了，我就回掉处理A的方法，没有我就去查看B，B如果有数据返回就去回掉处理B的方法...，并且每个回掉的处理方法一定要简单效率高，这样就实现了A,B,C三个任务的异步下载。节省CPU时间是在我没有事件要处理的时候，runloop是保持一个休眠的状态，减少CPU的空转。
+###CFRunLoop的源码 
+这段还是觉得YY大神整理的好直接摘抄了([原文地址](http://blog.ibireme.com/2015/05/18/runloop/)）
+
+	/// 用DefaultMode启动
+	void CFRunLoopRun(void) {
+	   	CFRunLoopRunSpecific(CFRunLoopGe	tCurrent(), 	kCFRunLoopDefaultMode, 1.0e10, false);
+	}
+ 
+		/// 用指定的Mode启动，允许设置RunLoop超时时间
+	int CFRunLoopRunInMode(CFStringRef modeName, CFTimeInterval seconds, Boolean stopAfterHandle) {
+ 	   return CFRunLoopRunSpecific(CFRunLoopGetCurrent(), modeName, seconds, returnAfterSourceHandled);
+	}		
+ 
+	/// RunLoop的实现
+	int CFRunLoopRunSpecific(runloop, modeName, seconds, stopAfterHandle) {
+    
+    /// 首先根据modeName找到对应mode
+    CFRunLoopModeRef currentMode = __CFRunLoopFindMode(runloop, modeName, false);
+    /// 如果mode里没有source/timer/observer, 直接返回。
+    if (__CFRunLoopModeIsEmpty(currentMode)) return;
+    
+    /// 1. 通知 Observers: RunLoop 即将进入 loop。
+    __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopEntry);
+    
+    /// 内部函数，进入loop
+    __CFRunLoopRun(runloop, currentMode, seconds, returnAfterSourceHandled) {
+        
+        Boolean sourceHandledThisLoop = NO;
+        int retVal = 0;
+        do {
+ 
+            /// 2. 通知 Observers: RunLoop 即将触发 Timer 回调。
+            __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopBeforeTimers);
+            /// 3. 通知 Observers: RunLoop 即将触发 Source0 (非port) 回调。
+            __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopBeforeSources);
+            /// 执行被加入的block
+            __CFRunLoopDoBlocks(runloop, currentMode);
+            
+            /// 4. RunLoop 触发 Source0 (非port) 回调。
+            sourceHandledThisLoop = __CFRunLoopDoSources0(runloop, currentMode, stopAfterHandle);
+            /// 执行被加入的block
+            __CFRunLoopDoBlocks(runloop, currentMode);
+ 
+            /// 5. 如果有 Source1 (基于port) 处于 ready 状态，直接处理这个 Source1 然后跳转去处理消息。
+            if (__Source0DidDispatchPortLastTime) {
+                Boolean hasMsg = __CFRunLoopServiceMachPort(dispatchPort, &msg)
+                if (hasMsg) goto handle_msg;
+            }
+            
+            /// 通知 Observers: RunLoop 的线程即将进入休眠(sleep)。
+            if (!sourceHandledThisLoop) {
+                __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopBeforeWaiting);
+            }
+            
+            /// 7. 调用 mach_msg 等待接受 mach_port 的消息。线程将进入休眠, 直到被下面某一个事件唤醒。
+            /// • 一个基于 port 的Source 的事件。
+            /// • 一个 Timer 到时间了
+            /// • RunLoop 自身的超时时间到了
+            /// • 被其他什么调用者手动唤醒
+            __CFRunLoopServiceMachPort(waitSet, &msg, sizeof(msg_buffer), &livePort) {
+                mach_msg(msg, MACH_RCV_MSG, port); // thread wait for receive msg
+            }
+ 
+            /// 8. 通知 Observers: RunLoop 的线程刚刚被唤醒了。
+            __CFRunLoopDoObservers(runloop, currentMode, kCFRunLoopAfterWaiting);
+            
+            /// 收到消息，处理消息。
+            handle_msg:
+ 
+            /// 9.1 如果一个 Timer 到时间了，触发这个Timer的回调。
+            if (msg_is_timer) {
+                __CFRunLoopDoTimers(runloop, currentMode, mach_absolute_time())
+            } 
+ 
+            /// 9.2 如果有dispatch到main_queue的block，执行block。
+            else if (msg_is_dispatch) {
+                __CFRUNLOOP_IS_SERVICING_THE_MAIN_DISPATCH_QUEUE__(msg);
+            } 
+ 
+            /// 9.3 如果一个 Source1 (基于port) 发出事件了，处理这个事件
+            else {
+                CFRunLoopSourceRef source1 = __CFRunLoopModeFindSourceForMachPort(runloop, currentMode, livePort);
+                sourceHandledThisLoop = __CFRunLoopDoSource1(runloop, currentMode, source1, msg);
+                if (sourceHandledThisLoop) {
+                    mach_msg(reply, MACH_SEND_MSG, reply);
+                }
+            }
+            
+            /// 执行加入到Loop的block
+            __CFRunLoopDoBlocks(runloop, currentMode);
+            
+ 
+            if (sourceHandledThisLoop && stopAfterHandle) {
+                /// 进入loop时参数说处理完事件就返回。
+                retVal = kCFRunLoopRunHandledSource;
+            } else if (timeout) {
+                /// 超出传入参数标记的超时时间了
+                retVal = kCFRunLoopRunTimedOut;
+            } else if (__CFRunLoopIsStopped(runloop)) {
+                /// 被外部调用者强制停止了
+                retVal = kCFRunLoopRunStopped;
+            } else if (__CFRunLoopModeIsEmpty(runloop, currentMode)) {
+                /// source/timer/observer一个都没有了
+                retVal = kCFRunLoopRunFinished;
+            }
+            
+            /// 如果没超时，mode里没空，loop也没被停止，那继续loop。
+        } while (retVal == 0);
+    }
+    
+    /// 10. 通知 Observers: RunLoop 即将退出。
+    __CFRunLoopDoObservers(rl, currentMode, kCFRunLoopExit);
+	}
+
+###事件源
+下午展示l RunLoop 的模型 
+![runloop](https://github.com/rhythmcity/rhythmcity.github.io/blob/master/img/runloop/runloopapple.jpg)
+
+这个图看起来有点难理解，大致可以看出来是一个线程内的一个循环，接收事件并且处理事件，并且可以看出RunLoop只处理两种源，输入源可时间源，而输入源又分为，**NSPort**，自定义源，**performSelector:OnThread:delay**
+
+####NSPort基于端口的源
+Cocoa和 Core Foundation 为使用端口相关的对象和函数创建的基于端口的源提供了内在支持。Cocoa中你从不需要直接创建输入源。你只需要简单的创建端口对象，并使用NSPort的方法将端口对象加入到run loop。端口对象会处理创建以及配置输入源。
+
+AFNetWorking 的实现
+> \+ (void)networkRequestThreadEntryPoint:(id)__unused object {
+> 
+>  @autoreleasepool {
+> 
+>  	[[NSThread currentThread] setName:@"AFNetworking"];
+>
+>  	NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+> 
+> 	[runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode];
+> 
+>    [runLoop run];
+>    }
+> 
+>}
+
+不过AFNetWorking 添加这个NSMachPort没有什么实际的发送消息 只是让runloop去监听这个端口保证线程不被退出
+
+####自定义输入源
+在CF中，必须使用**CFRunLoopSourceRef**来创建自定义输入源，然后使用回掉函数去配置输入源，平时我们的触摸，滚动都是这样的不过这是由系统去实现的，我们几乎用不到自己去自定义输入源
+
+####performSelector:OnThread:delay
+这个可能是我们用到的次数最多的了，他可以指定函数在任意线程运行的输入源，perform selector执行完后会自动清除出runloop 
+
+####定时源NSTimer 
+定时源在预设的时间同步的传递消息，因为他是基于runloop的也就决定了他不是实时的，取决于Run Loop Modes 和 cpu调度有关系
+
+###runloopModes
+Run Loop Mode可以理解为一个集合中包括所有要监视的事件源和要通知的Run Loop中注册的观察者。每一次运行自己的Run Loop时，都需要显示或者隐示的指定其运行于哪一种Mode。在设置Run Loop Mode后，你的Run Loop会自动过滤和其他Mode相关的事件源，而只监视和当前设置Mode相关的源(通知相关的观察者)。大多数时候，Run Loop都是运行在系统定义的默认模式上。
+文档翻译 （[官方文档](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW23)）
+
+| Mode       			 | 名称          		 | 描述  |
+| ------------- |:-------------------------:| -----:|
+| Default     | NSDefaultRunLoopMode (Cocoa)kCFRunLoopDefaultMode (Core Foundation)| 默认情况下，将包含所有操作，并且大多数情况下都会使用此模式|
+| Connection    | 	NSConnectionReplyMode (Cocoa)    |   可以使用这种模式结合NSConnection监听事件，不过你应该很少使用 |
+| Modal | 	NSModalPanelRunLoopMode (Cocoa)     |    模态模式，此模式下，RunLoop只对处理模态相关事件|
+| Event tracking| 	NSEventTrackingRunLoopMode (Cocoa)     |    此模式下用于处理窗口事件,鼠标事件等 |
+| Common modes | 	NSRunLoopCommonModes (Cocoa)kCFRunLoopCommonModes (Core Foundation)  |    此模式用于配置”组模式”，一个输入源与此模式关联，则输入源与组中的所有模式相关联。 |
+
+
+###RunLoop与线程的关系
+线程和runloop是一一对应的，苹果不允许直接创建Runloop，只能通过**currentRunLoop**或者**CFRunLoopGetCurrent**来获取当前的runloop，如果你不获取当前线程就不会有runloop，当然主线程除外，主线程是默认开启runloop的 具体实现还请参考CFRunloop的**CFRunLoopGetMain()** 和 **CFRunLoopGetCurrent()**
+
+###RunLoop与AutoreleasePool的关系
+首先要知道AutoreleasePool创建和释放都做什么操作
+
+	@autorelease{
+	
+	}
+相当于
+
+	 objc_autoreleasePoolPush() 
+	 
+	 objc_autoreleasePoolPop(pool)
+	 
+上面的代码可以在 objc4-646中找到
+	
+AutoreleasePool 内的对象是在runloop每次睡眠的间隔去释放的 以下摘自YY的[原文地址](http://blog.ibireme.com/2015/05/18/runloop/)
+
+App启动后，苹果在主线程 RunLoop 里注册了两个 Observer，其回调都是 _wrapRunLoopWithAutoreleasePoolHandler()。
+
+第一个 Observer 监视的事件是 Entry(即将进入Loop)，其回调内会调用 _objc_autoreleasePoolPush() 创建自动释放池。其 order 是-2147483647，优先级最高，保证创建释放池发生在其他所有回调之前。
+
+第二个 Observer 监视了两个事件： BeforeWaiting(准备进入休眠) 时调用**_objc_autoreleasePoolPop()** 和 **_objc_autoreleasePoolPush()**  释放旧的池并创建新池；Exit(即将退出Loop) 时调用 **_objc_autoreleasePoolPop()** 来释放自动释放池。这个 Observer 的 order 是 2147483647，优先级最低，保证其释放池子发生在其他所有回调之后。
+
+在主线程执行的代码，通常是写在诸如事件回调、Timer回调内的。这些回调会被 RunLoop 创建好的 AutoreleasePool 环绕着，所以不会出现内存泄漏，开发者也不必显示创建 Pool 了。
+
+
+	
